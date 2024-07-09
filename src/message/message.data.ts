@@ -99,7 +99,7 @@ export class MessageData {
         returnOriginal: false,
       },
     );
-    if (!deletedMessage) throw new Error('The message to resolve does not exist');
+    if (!deletedMessage) throw new Error('The message to delete does not exist');
     return chatMessageToObject(deletedMessage);
   }
 
