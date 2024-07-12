@@ -145,6 +145,7 @@ export class MessageLogic implements IMessageLogic {
       richContent: await this.mapRichContent(messageDto, message),
       resolved: message.resolved,
       isSenderBlocked: false,
+      tags: message.tags,
     });
 
     this.conversationChannel.send(sendMessageEvent, conversationId);
@@ -240,6 +241,27 @@ export class MessageLogic implements IMessageLogic {
 
     return this.messageData.getMessage(messageId.toHexString());
   }
+
+  async updateTags(messageId: ObjectID, tags: string[], authenticatedUser: IAuthenticatedUser){
+    if (
+      !(await this.permissions.messagePermissions({
+        user: authenticatedUser,
+        messageId: messageId.toHexString(),
+        action: Action.updateMessage,
+      }))
+    ) {
+      throw new ForbiddenError(`User is not authorised to update tags for this message`);
+    }
+    await this.messageData.updateTags(messageId,tags);
+    return this.messageData.getMessage(messageId.toHexString())
+  }
+
+  async searchMessagesByTags(tag: string): Promise<ChatMessage[]> {
+    // may deal with returning conversations where users arent authorised to view
+    return this.messageData.searchMessagesByTags(tag);
+  }
+
+
 
   private async getBlockedUserIds(
     contexts: ContextSchema[],

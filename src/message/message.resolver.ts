@@ -218,4 +218,21 @@ export class RichMessageContentResolver {
 
     return response.richContent?.poll;
   }
+
+  @Mutation(() => ChatMessage)
+  @UseGuards(GqlAuthGuard)
+  async updateConversationMessageTags(
+    @Args('messageId') messageId: ObjectId,
+    @Args('tags', { type: () => [String] }) tags: string[],
+    @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
+  ): Promise<ChatMessage> {
+    return this.messageLogic.updateTags(messageId, tags, authenticatedUser);
+  }
+  @Query(() => [ChatMessage])
+  @UseGuards(GqlAuthGuard)
+  async searchMessagesByTag(
+    @Args('tag') tag: string,
+  ): Promise<ChatMessage[]> {
+    return this.messageLogic.searchMessagesByTags(tag);
+  }
 }

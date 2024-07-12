@@ -29,6 +29,7 @@ export class MessageData {
     chatMessage.conversationId = data.conversationId;
     chatMessage.created = new Date();
     chatMessage.deleted = false;
+    chatMessage.tags = data.tags
 
     createRichContent(data, chatMessage);
 
@@ -266,6 +267,33 @@ export class MessageData {
       _id: { $in: ids },
     });
     return chatMessages.map((chatMessage) => chatMessageToObject(chatMessage));
+  }
+  
+  // Searching and retrieving messages by tag
+  async searchMessagesByTags(tag: String): Promise<ChatMessage[]> {
+    const chatMessages = await this.chatMessageModel.find({
+      tags: tag
+    });
+
+    // if (chatMessages.length === 0 || !chatMessages) {
+    //   throw new Error('No chat messages found for the given tag');
+    // }
+
+    return chatMessages.map((chatMessage) => chatMessageToObject(chatMessage));
+  }
+
+  async updateTags(messageId: ObjectID, tags: string[]): Promise<ChatMessage> {
+    const updateProperty = { tags: tags };
+    const updatedMessage = await this.chatMessageModel.findByIdAndUpdate(
+      messageId.toHexString(),
+      updateProperty,
+      {
+      new: true,
+      returnOriginal: false,
+      },
+    );
+    if (!updatedMessage) throw new Error('The message to update tags does not exist');
+    return chatMessageToObject(updatedMessage);
   }
 
   async getMessagesGroupedByConversation(

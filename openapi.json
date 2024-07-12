@@ -681,7 +681,8 @@
                             "deleteMessage",
                             "resolveMessage",
                             "pinMessage",
-                            "createPoll"
+                            "createPoll",
+                            "updateTags"
                         ],
                         "type": "string"
                     },
@@ -979,6 +980,12 @@
                     },
                     "isSenderBlocked": {
                         "type": "boolean"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
                     }
                 },
                 "required": [

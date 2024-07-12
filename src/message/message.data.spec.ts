@@ -106,6 +106,90 @@ describe('MessageData', () => {
 
       expect(gotMessage).toMatchObject(sentMessage)
     });
+
+    it('message sent should have tags included', async () => {
+      const conversationId = new ObjectID();
+      const sentMessage = await messageData.create(
+        { conversationId, text: 'Hello world', tags: ['hello','world'] },
+        senderId,
+      );
+
+      const gotMessage = await messageData.getMessage(sentMessage.id.toHexString())
+      expect(gotMessage.tags).toEqual(sentMessage.tags);
+    });
+  });
+
+  describe('updateTags', () => {
+    it('should be defined', () => {
+      expect(messageData.updateTags).toBeDefined();
+    });
+    
+    it('successfully updates the tags of a message', async () => {
+      const conversationId = new ObjectID();
+      const message = await messageData.create(
+        { conversationId, text: 'Message with old tags', tags: ['old'] },
+        senderId,
+      );
+
+      // Make sure that the message starts with the old tags
+      expect(message.tags).toEqual(['old']);
+
+      const updatedMessage = await messageData.updateTags(message.id, ['new']);
+
+      // Check if updatedMessage has tags to begin with
+      expect(updatedMessage.tags).toBeDefined();
+
+      // Make sure that the message now has the new tags
+      expect(updatedMessage.tags).toEqual(['new'])
+
+      // Retrieve the message again to verify the update
+      const retrievedMessage = await messageData.getMessage(message.id.toHexString());
+      // Make sure that the retrieved message also has the new tags
+      expect(retrievedMessage.tags).toContain("new");
+      // Make sure that the updatedMessage doesn't have the old tags
+      expect(retrievedMessage.tags).not.toContain('old');
+    });
+  });
+
+  describe('searchMessagesByTags', () => {
+    it('should be defined', () => {
+      expect(messageData.searchMessagesByTags).toBeDefined();
+    });
+
+    // creating messages with and without tags
+    it('successfully searches for messages by tags', async () => {
+      const conversationId = new ObjectID();
+      const message1 = await messageData.create(
+        { conversationId, text: 'Message with tags', tags: ['tag1', 'tag2'] },
+        senderId,
+      );
+      const message2 = await messageData.create(
+        { conversationId, text: 'Another message with tags', tags: ['tag2', 'tag3'] },
+        senderId,
+      );
+      const message3 = await messageData.create(
+        { conversationId, text: 'Message without tags' },
+        senderId,
+      );
+
+      const searchResult1 = await messageData.searchMessagesByTags('tag1');
+      expect(searchResult1).toContainEqual(message1);
+      expect(searchResult1).not.toContainEqual(message2);
+      expect(searchResult1).not.toContainEqual(message3);
+
+      const searchResult2 = await messageData.searchMessagesByTags('tag2');
+      expect(searchResult2).toContainEqual(message1);
+      expect(searchResult2).toContainEqual(message2);
+      expect(searchResult2).not.toContainEqual(message3);
+
+      const searchResult3 = await messageData.searchMessagesByTags('tag3');
+      expect(searchResult3).not.toContainEqual(message1);
+      expect(searchResult3).toContainEqual(message2);
+      expect(searchResult3).not.toContainEqual(message3);
+
+      const searchResult4 = await messageData.searchMessagesByTags('tag4');
+      expect(searchResult4).toHaveLength(0)
+    });
   });
 
   describe('delete', () => {
