@@ -242,7 +242,7 @@ export class MessageLogic implements IMessageLogic {
     return this.messageData.getMessage(messageId.toHexString());
   }
 
-  async updateTags(messageId: ObjectID, tags: string[], authenticatedUser: IAuthenticatedUser){
+  async updateConversationMessageTags(messageId: ObjectID, tags: string[], authenticatedUser: IAuthenticatedUser){
     if (
       !(await this.permissions.messagePermissions({
         user: authenticatedUser,
@@ -252,13 +252,13 @@ export class MessageLogic implements IMessageLogic {
     ) {
       throw new ForbiddenError(`User is not authorised to update tags for this message`);
     }
-    await this.messageData.updateTags(messageId,tags);
+    await this.messageData.updateConversationMessageTags(messageId,tags);
     return this.messageData.getMessage(messageId.toHexString())
   }
 
-  async searchMessagesByTags(tag: string): Promise<ChatMessage[]> {
+  async searchMessagesByTag(tag: string): Promise<ChatMessage[]> {
     // may deal with returning conversations where users arent authorised to view
-    return this.messageData.searchMessagesByTags(tag);
+    return this.messageData.searchMessagesByTag(tag);
   }
 
 

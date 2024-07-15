@@ -226,13 +226,13 @@ export class RichMessageContentResolver {
     @Args('tags', { type: () => [String] }) tags: string[],
     @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
   ): Promise<ChatMessage> {
-    return this.messageLogic.updateTags(messageId, tags, authenticatedUser);
+    return this.messageLogic.updateConversationMessageTags(messageId, tags, authenticatedUser);
   }
   @Query(() => [ChatMessage])
   @UseGuards(GqlAuthGuard)
   async searchMessagesByTag(
     @Args('tag') tag: string,
   ): Promise<ChatMessage[]> {
-    return this.messageLogic.searchMessagesByTags(tag);
+    return this.messageLogic.searchMessagesByTag(tag);
   }
 }

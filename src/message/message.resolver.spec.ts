@@ -48,6 +48,7 @@ const chatMessage: ChatMessage = {
   resolved: false,
   likes: [],
   likesCount: 0,
+  tags: []
 };
 
 describe('MessageResolver', () => {
@@ -132,6 +133,7 @@ describe('MessageResolver', () => {
             id,
             text: 'a chat message',
             sender: { id: senderId.toHexString() },
+            tags: [],
           },
         ];
       }
@@ -147,6 +149,7 @@ describe('MessageResolver', () => {
             text: 'a chat message',
             sender: { id: senderId.toHexString() },
             richContent: {},
+            tags: [],
           },
         ];
       }
@@ -166,6 +169,7 @@ describe('MessageResolver', () => {
                 id: replyMessageId,
               },
             },
+            tags: [],
           },
         ];
       }
@@ -194,6 +198,19 @@ describe('MessageResolver', () => {
       messagesFilterInput: MessagesFilterInput,
     ): Promise<MessageGroupedByConversationOutput[]> {
       return Promise.resolve([]);
+    }
+
+    updateConversationMessageTags(
+      messageId: ObjectID,
+      tags: string[],
+      authenticatedUser: IAuthenticatedUser,
+    ): Promise<ChatMessage> {
+      return Promise.resolve(chatMessage);
+    }
+    searchMessagesByTag(
+      tag: string,
+    ): Promise<ChatMessage[]> {
+      return Promise.resolve([chatMessage]);
     }
   }
 
@@ -303,6 +320,7 @@ describe('MessageResolver', () => {
           likesCount: 0,
           sender: { id: senderId.toHexString() },
           text: 'a chat message',
+          tags: [],
         },
       ]);
     });
@@ -334,6 +352,7 @@ describe('MessageResolver', () => {
           richContent: {},
           sender: { id: senderId.toHexString() },
           text: 'a chat message',
+          tags: [],
         },
       ]);
     });
@@ -369,6 +388,7 @@ describe('MessageResolver', () => {
           },
           sender: { id: senderId.toHexString() },
           text: 'a reply message',
+          tags: [],
         },
       ]);
     });
@@ -562,6 +582,19 @@ describe('MessageResolver', () => {
         { accountRole: 'admin', userId },
       );
     });
+  });
+
+  describe('tags section', () => {
+    it('tag methods should be defined', () => {
+      expect(messageLogic.updateConversationMessageTags).toBeDefined();
+      expect(messageLogic.searchMessagesByTag).toBeDefined();
+    });
+
+    // it('tags should be added to a message', () => {
+    //   jest.spyOn(messageLogic, 'updateConversationMessageTags');
+
+    // });
+    
   });
 });
 

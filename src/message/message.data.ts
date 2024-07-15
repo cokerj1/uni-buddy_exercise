@@ -270,7 +270,7 @@ export class MessageData {
   }
   
   // Searching and retrieving messages by tag
-  async searchMessagesByTags(tag: String): Promise<ChatMessage[]> {
+  async searchMessagesByTag(tag: String): Promise<ChatMessage[]> {
     const chatMessages = await this.chatMessageModel.find({
       tags: tag
     });
@@ -282,7 +282,7 @@ export class MessageData {
     return chatMessages.map((chatMessage) => chatMessageToObject(chatMessage));
   }
 
-  async updateTags(messageId: ObjectID, tags: string[]): Promise<ChatMessage> {
+  async updateConversationMessageTags(messageId: ObjectID, tags: string[]): Promise<ChatMessage> {
     const updateProperty = { tags: tags };
     const updatedMessage = await this.chatMessageModel.findByIdAndUpdate(
       messageId.toHexString(),

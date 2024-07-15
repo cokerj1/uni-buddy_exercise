@@ -121,7 +121,7 @@ describe('MessageData', () => {
 
   describe('updateTags', () => {
     it('should be defined', () => {
-      expect(messageData.updateTags).toBeDefined();
+      expect(messageData.updateConversationMessageTags).toBeDefined();
     });
     
     it('successfully updates the tags of a message', async () => {
@@ -134,7 +134,7 @@ describe('MessageData', () => {
       // Make sure that the message starts with the old tags
       expect(message.tags).toEqual(['old']);
 
-      const updatedMessage = await messageData.updateTags(message.id, ['new']);
+      const updatedMessage = await messageData.updateConversationMessageTags(message.id, ['new']);
 
       // Check if updatedMessage has tags to begin with
       expect(updatedMessage.tags).toBeDefined();
@@ -151,9 +151,9 @@ describe('MessageData', () => {
     });
   });
 
-  describe('searchMessagesByTags', () => {
+  describe('searchMessagesByTag', () => {
     it('should be defined', () => {
-      expect(messageData.searchMessagesByTags).toBeDefined();
+      expect(messageData.searchMessagesByTag).toBeDefined();
     });
 
     // creating messages with and without tags
@@ -172,22 +172,22 @@ describe('MessageData', () => {
         senderId,
       );
 
-      const searchResult1 = await messageData.searchMessagesByTags('tag1');
+      const searchResult1 = await messageData.searchMessagesByTag('tag1');
       expect(searchResult1).toContainEqual(message1);
       expect(searchResult1).not.toContainEqual(message2);
       expect(searchResult1).not.toContainEqual(message3);
 
-      const searchResult2 = await messageData.searchMessagesByTags('tag2');
+      const searchResult2 = await messageData.searchMessagesByTag('tag2');
       expect(searchResult2).toContainEqual(message1);
       expect(searchResult2).toContainEqual(message2);
       expect(searchResult2).not.toContainEqual(message3);
 
-      const searchResult3 = await messageData.searchMessagesByTags('tag3');
+      const searchResult3 = await messageData.searchMessagesByTag('tag3');
       expect(searchResult3).not.toContainEqual(message1);
       expect(searchResult3).toContainEqual(message2);
       expect(searchResult3).not.toContainEqual(message3);
 
-      const searchResult4 = await messageData.searchMessagesByTags('tag4');
+      const searchResult4 = await messageData.searchMessagesByTag('tag4');
       expect(searchResult4).toHaveLength(0)
     });
   });
